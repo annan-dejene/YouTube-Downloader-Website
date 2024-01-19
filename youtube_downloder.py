@@ -1,13 +1,16 @@
 from pytube import YouTube
+from io import BytesIO
 
 
-def downloader(url, save_path):
+def downloader(url):
   try:
     yt = YouTube(url)
-    streams = yt.streams.filter(progressive=True, file_extension="mp4")
-    highest_res = streams.get_highest_resolution()
-    highest_res.download(output_path=save_path)
-    return True
+    stream = yt.streams.filter(file_extension="mp4").first()
+    if stream:
+      video_data = BytesIO(stream.stream_to_buffer)
+      file_name = f'{yt.title}.mp4'
+      return 'Success', video_data.getValue(), file_name
+    else:
+      return 'Error', 'No available streams for the provided URL', None
   except Exception as e:
-    return e, None
-
+    return 'Error', e, None
