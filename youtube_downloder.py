@@ -3,13 +3,15 @@ from io import BytesIO
 
 
 def downloader(url):
+  buffer = BytesIO()
   try:
     yt = YouTube(url)
     stream = yt.streams.filter(file_extension="mp4").first()
     if stream:
-      video_data = BytesIO(stream.stream_to_buffer)
+      stream.stream_to_buffer(buffer)
+      buffer.seek(0)
       file_name = f'{yt.title}.mp4'
-      return 'Success', video_data.getValue(), file_name
+      return 'Success', buffer, file_name
     else:
       return 'Error', 'No available streams for the provided URL', None
   except Exception as e:

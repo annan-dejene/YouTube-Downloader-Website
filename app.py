@@ -10,10 +10,10 @@ app.config['SECRET_KEY'] = 'hawisecretbeki'
 def index():
   if request.method == 'POST':
     url = request.form['url']
-    cat, vid_data, fname = downloader(url)
+    cat, buffer, fname = downloader(url)
     if cat == 'Success':
-      response = send_file(path_or_file=vid_data, as_attachment=True, download_name=fname)
       flash('Download Successful!', category='success')
+      response = send_file(buffer, as_attachment=True, download_name=fname)
       return response
     else:
       flash('Download Failed!', category='error')
